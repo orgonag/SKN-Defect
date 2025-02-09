@@ -146,7 +146,7 @@ def rearrange_columns(df, priority_columns):
 def main():
     # Page setup
     st.set_page_config(layout="wide", page_title="CSV Filter Dashboard")
-    st.title("Filtered CSV Column Viewer by Subdivision and Status")
+    st.title("Curated DTN and ATGMS Defect Dashboard - Orgo Nag")
 
     # Initialize session state
     if "live_tracking" not in st.session_state:
