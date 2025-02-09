@@ -20,25 +20,20 @@ def load_data():
 
 
 def create_tooltip(row, defect_type="DTN"):
-    """Create tooltip HTML for map markers"""
-    if defect_type == "DTN":
-        return f"""
-        <b>DTN Defect</b><br>
-        <b>MP:</b> {row.get('MP', 'N/A')}<br>
-        <b>Asset:</b> {row.get('Asset', 'N/A')}<br>
-        <b>Status:</b> {row.get('Status', 'N/A')}<br>
-        <b>Defect Date:</b> {row.get('Defect Date', 'N/A')}<br>
-        <b>Comment:</b> {row.get('Comment', 'N/A')}
-        """
-    else:
-        return f"""
-        <b>ATGMS Defect</b><br>
-        <b>MP:</b> {row.get('MP', 'N/A')}<br>
-        <b>Sys:</b> {row.get('Sys', 'N/A')}<br>
-        <b>Status:</b> {row.get('Status', 'N/A')}<br>
-        <b>Severity:</b> {row.get('Severity', 'N/A')}<br>
-        <b>Value:</b> {row.get('Value', 'N/A')}
-        """
+    """
+    Create tooltip HTML for map markers, displaying ALL columns in the row.
+    """
+    # Start with a header indicating defect type
+    tooltip_html = f"<b>{defect_type.upper()} Defect</b><br>"
+
+    # Use a table format for readability
+    tooltip_html += "<table>"
+    for col in row.index:
+        val = row[col]
+        tooltip_html += f"<tr><td><b>{col}</b></td><td>{val}</td></tr>"
+    tooltip_html += "</table>"
+
+    return tooltip_html
 
 
 def process_coordinates(df):
@@ -65,7 +60,7 @@ def create_map(dtn_df, tec_df, map_view_mode="markers", basemap_style="OpenStree
         dtn_cluster = MarkerCluster(name="DTN Defects", disableClusteringAtZoom=13).add_to(m)
         tec_cluster = MarkerCluster(name="ATGMS Defects", disableClusteringAtZoom=13).add_to(m)
 
-        # Add markers efficiently
+        # Add markers for DTN
         if {'Latitude', 'Longitude'}.issubset(dtn_df.columns):
             for _, row in dtn_df.dropna(subset=['Latitude', 'Longitude']).iterrows():
                 Marker(
@@ -74,6 +69,7 @@ def create_map(dtn_df, tec_df, map_view_mode="markers", basemap_style="OpenStree
                     icon=folium.Icon(color='red', icon='info-sign')
                 ).add_to(dtn_cluster)
 
+        # Add markers for TEC
         if {'Latitude', 'Longitude'}.issubset(tec_df.columns):
             for _, row in tec_df.dropna(subset=['Latitude', 'Longitude']).iterrows():
                 Marker(
@@ -228,7 +224,8 @@ def main():
     basemap_options = {
         "Street (OpenStreetMap)": "OpenStreetMap",
         "Light (CartoDB positron)": "CartoDB positron",
-        "Dark (CartoDB dark_matter)": "CartoDB dark_matter"
+        "Dark (CartoDB dark_matter)": "CartoDB dark_matter",
+        "Topographic (OpenTopoMap)": "OpenTopoMap"
     }
     basemap_choice = st.sidebar.selectbox(
         "Select Basemap Style",
