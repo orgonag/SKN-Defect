@@ -6,7 +6,7 @@ from folium.plugins import HeatMap, MarkerCluster, LocateControl
 from streamlit_folium import folium_static
 
 # This is a list of subdivisions to choose from
-SUBDIVISIONS = ["HARDISTY", "SUTHERLAND", "WILKIE", "WYNYARD"]
+SUBDIVISIONS = ['HARDISTY', "SUTHERLAND", "WILKIE", "WYNYARD"]
 
 @st.cache_data
 def load_data():
@@ -109,7 +109,7 @@ def filter_dataframe(df, filters):
     return df
 
 def create_sidebar_filters(df, prefix, filter_columns, default_values=None):
-    # Create a selectbox for each filterable column in the sidebar
+    # Create a select box for each filterable column in the sidebar
     filters = {}
     default_values = default_values or {}
     for col in filter_columns:
